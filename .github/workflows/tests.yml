@@ -1,0 +1,62 @@
+name: Go Tests
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  statictest:
+    runs-on: ubuntu-latest
+    container: golang:1.21
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Download statictest binary
+        uses: robinraju/release-downloader@v1.8
+        with:
+          repository: Yandex-Practicum/go-autotests
+          latest: true
+          fileName: statictest
+          out-file-path: .tools
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup autotest binary
+        run: |
+          chmod -R +x $GITHUB_WORKSPACE/.tools/statictest
+          mv $GITHUB_WORKSPACE/.tools/statictest /usr/local/bin/statictest
+
+      - name: Run statictest
+        run: |
+          go vet -vettool=$(which statictest) ./...
+
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+          cache: false
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: v1.54
+          args: --timeout=5m
+
+  build:
+    runs-on: ubuntu-latest
+    needs: [statictest, lint]
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.21
+
+      - name: Build
+        run: go build -v ./...
