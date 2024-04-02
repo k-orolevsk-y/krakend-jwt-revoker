@@ -67,6 +67,37 @@ Example configuration:
 
 Ensure that you adjust these configuration options according to your specific requirements and environment setup.
 
+## Revoke Server Endpoint
+
+The JWT Revoke Server exposes a single POST endpoint for token revocation:
+
+```
+POST http://{addr}/
+```
+
+### Request Body
+
+The request body should be a JSON array containing objects with key-value pairs specifying the criteria for token revocation. Each object represents a criterion to be applied to the tokens. The following structure is expected:
+
+```json
+[
+    {
+        "key": "uuid",
+        "value": "..."
+    },
+    {
+        "key": "...",
+        "value": "..."
+    }
+]
+```
+
+- **key**: The key specifying the criterion (e.g., "uuid" for the unique identifier).
+- **value**: The corresponding value against which tokens will be evaluated. All values are converted to strings for comparison.
+
+
+Tokens will be revoked based on the specified criteria. It's essential to note that each token must contain the specified fields for revocation and the iat field, which will be used for token evaluation by time.
+
 ## Contribution
 
 Contributions are welcome! Feel free to submit issues or pull requests if you encounter any problems or have suggestions for improvements.
