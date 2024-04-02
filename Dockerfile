@@ -6,5 +6,5 @@ WORKDIR /app
 RUN go mod download
 RUN go build -buildmode=plugin -o krakend_revoke_jwt.so ./cmd/krakend-jwt-revoker/main.go
 
-FROM devopsfaith/krakend:latest
+FROM devopsfaith/krakend:2.6
 COPY --from=builder-plugin /app/krakend_revoke_jwt.so /etc/krakend/plugins/krakend_revoke_jwt.so
