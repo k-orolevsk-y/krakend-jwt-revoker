@@ -1,6 +1,7 @@
 package revoker
 
 import (
+	"fmt"
 	"sync"
 	"time"
 )
@@ -62,7 +63,7 @@ func (bl *BlackList) Test(data map[string]any) bool {
 		flag := true
 		for _, v := range element.Conditions {
 			condition, ok := data[v.Key]
-			if !ok || condition != v.Value {
+			if !ok || fmt.Sprint(condition) != v.Value {
 				flag = false
 				break
 			}
