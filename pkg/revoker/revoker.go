@@ -48,7 +48,7 @@ func (r *Revoker) Middleware(req *http.Request) error {
 
 	claims, err := r.getTokenClaims(authString)
 	if err != nil {
-		return err
+		return nil
 	}
 
 	if r.blacklist.Test(*claims) {
